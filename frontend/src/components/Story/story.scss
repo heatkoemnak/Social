@@ -1,0 +1,100 @@
+.headerStory {
+    display: flex;
+    margin-top: 5px;
+    
+    .story-title {
+      padding: 5px;
+    }
+    .createStory {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      width: 135px;
+      background-color: #cccbcb;
+      border-radius: 18px;
+      justify-content: center;
+      cursor: pointer;
+  
+  
+      .storyBtn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px;
+        border-radius: 15px;
+        background-color: rgb(0, 157, 10);
+        cursor: pointer;
+        color: #fff;
+        border: none;
+      }
+      i {
+        text-align: center;
+        width: 20px;
+        height: 20px;
+        color: #128600;
+        font-size: 20px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 50%;
+        padding: 5px;
+      }
+    }
+  }
+  
+  .storiesContainer {
+    display: flex;
+    margin: 10px;
+    padding: 10px;
+    background-color: #fff;
+    overflow-x: scroll;
+    .storyWrapper {
+      width: 120px;
+      padding: 5px;
+      margin-right: 5px;
+      border: 1px solid rgb(246, 246, 246);
+      border-radius: 18px;
+      .storyImage {
+        width: 120px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 17px;
+        cursor: pointer;
+        border: 1px solid rgb(168, 180, 176);
+        &:hover {
+          cursor: pointer;
+          border: 1px solid rgb(5, 195, 81);
+          transition: all ease-in-out 0.5s;
+          border-radius: 18px;
+        }
+      }
+      .storyInfo {
+        display: flex;
+        gap: 3px;
+        .profileImage {
+          &:hover {
+            cursor: pointer;
+            border: 2px solid rgb(168, 180, 176);
+            transition: all ease-in-out 0.5s;
+            border-radius: 18px;
+          }
+          flex: 1;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid rgb(1, 171, 1);
+        }
+        .profileUsername {
+          flex: 2;
+          font-size: 14px;
+          font-weight: 500;
+          color: rgb(48, 46, 46);
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  

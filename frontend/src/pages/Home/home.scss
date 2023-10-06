@@ -1,0 +1,13 @@
+.home {
+  width: 100%;
+  background-color: #f6f6f6;
+  flex: 3;
+  overflow: hidden;
+
+  .post-title {
+    padding: 5px;
+  }
+  .BottomRightBar {
+    display: flex;
+  }
+}

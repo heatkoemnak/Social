@@ -1,0 +1,55 @@
+.onlineContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  cursor: pointer;
+  .online-title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .online-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgb(42, 180, 42);
+  }
+  .online-friends {
+    display: flex;
+    flex-direction: column;
+  }
+  .online-image-container {
+    // background-color: #9c6b6b;
+    display: flex;
+    gap: 10px;
+    position: relative;
+    .online {
+      width: 9px;
+      height: 9px;
+      top: 35px;
+      left: 27px;
+      background-color: rgb(42, 214, 36);
+      border-radius: 50%;
+      border: 2px solid rgb(255, 255, 255);
+      position: absolute;
+    }
+    .onlineBtn {
+      padding: 4px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgb(255, 255, 255);
+      // background-color: #006aff;
+      background-color: rgb(94, 107, 103);
+
+      border-radius: 6px;
+      &:hover {
+        background-color: #3a72ff;
+      }
+    }
+  }
+}

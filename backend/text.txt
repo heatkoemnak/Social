@@ -1,0 +1,1 @@
+// const MONGO_URL='mongodb+srv://heatkimnak:lFJjobcXGWkptAT0@sosialapi.moly732.mongodb.net/socialDB?retryWrites=true&w=majority';
