@@ -44,13 +44,12 @@ export default function Post({ post }) {
 
   const handleClick = async () => {
     try {
-      await axios
-        .post(`http://localhost:8000/api/post/like-dislike/${post._id}`, {
+      await axios.post(
+        `http://localhost:8000/api/post/like-dislike/${post._id}`,
+        {
           userId,
-        })
-        .then((res) => {
-          console.log(res.data);
-        });
+        }
+      );
     } catch (err) {
       console.log(err);
     }
