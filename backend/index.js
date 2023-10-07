@@ -48,4 +48,4 @@ app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
 app.use('/api/friend', friendRoute);
 app.use('/api/post', auth, postRoute);
-app.use('/api/cate', auth, cateRoute);
+app.use('/api/cates', auth, cateRoute);

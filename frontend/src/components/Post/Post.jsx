@@ -60,7 +60,66 @@ export default function Post({ post }) {
 
   return (
     <>
-      <div className="posts">
+      <div className="PostsContainer">
+        <div className="postTop">
+          <div className="profile">
+            <Link to={`/profile/${username}`} className="link">
+              <img
+                src={
+                  profilePicture
+                    ? profilePicture
+                    : 'https://img.myloview.com/stickers/default-avatar-profile-icon-social-media-user-image-400-251200044.jpg'
+                }
+                alt=""
+              />
+            </Link>
+            <Link to={`/profile/${username}`} className="link">
+              <span className="username" onClick={IsAuth}>
+                {username}
+                <i className="fa-solid fa-circle-check"></i>
+              </span>
+            </Link>
+            <span className="time">{now.getDay()} days ago</span>
+            <i className="fa-solid fa-earth-americas"></i>
+          </div>
+          <div className="threeDot">
+            <i className="fas fa-ellipsis-h"></i>
+          </div>
+        </div>
+        <div className="postCenter">
+          <p className="postTitle">{post.desc}</p>
+          <img src={post.post_image} alt="" />
+        </div>
+        <div className="postBottom">
+          <div className="TextComment">
+            <Link to={`/profile/${authUsername}`}>
+              <img src={authProfile} alt="" className="profile" />
+            </Link>
+            <input
+              type="text"
+              name=""
+              className="CmtHolder"
+              placeholder="write a comment.."
+            />
+          </div>
+          <div className="postBottomRight">
+            <span className="likeCounter">{likes}</span>
+            <i
+              className="far fa-heart"
+              onClick={handleClick}
+              style={{ color: isLiked ? 'red' : 'black' }}
+            ></i>
+            <span className="postCommentText">{post.comments.length}</span>
+            <i className="far fa-comment"></i>
+            <span>comments</span>
+            <span className="heart-count">{post.share.length}</span>
+            <i className="far fa-paper-plane"></i>
+            <span>Share</span>
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="posts">
         <div className="post">
           <div className="post_leftSide">
             <div className="post-left-top">
@@ -118,7 +177,7 @@ export default function Post({ post }) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

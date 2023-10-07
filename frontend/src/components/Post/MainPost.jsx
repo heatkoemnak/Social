@@ -7,7 +7,9 @@ import { Link, useParams } from 'react-router-dom';
 export default function MainPost() {
   const [authProfile, setAuthProfile] = useState();
   const [authUsername, setAuthUsername] = useState();
+  const [cates, setCates] = useState([]);
   const [posts, setPosts] = useState();
+  const [category, setCategory] = useState();
   const { name } = useParams();
 
   const { setIsUser } = useContext(PostContext);
@@ -23,10 +25,10 @@ export default function MainPost() {
   const fetchCateByName = async () => {
     try {
       if (name) {
-        const res = await axios.get(`http://localhost:8000/api/cate/${name}`);
+        const res = await axios.get(`http://localhost:8000/api/cates/${name}`);
         setPosts(res.data);
       } else {
-        const res = await axios.get('http://localhost:8000/api/cate/');
+        const res = await axios.get('http://localhost:8000/api/cates/');
         setPosts(res.data);
       }
     } catch (error) {
@@ -65,10 +67,11 @@ export default function MainPost() {
     const formData = new FormData();
     formData.append('image', file);
     formData.append('title', title);
+    formData.append('category', category);
     await axios
       .post(`http://localhost:8000/api/post/create-post`, formData)
       .then((res) => {
-        console.log(res.data);
+        setIsClick(!isClick);
       })
       .catch((err) => {
         console.log(err);
@@ -87,6 +90,21 @@ export default function MainPost() {
         />
       </>
     );
+  };
+
+  useEffect(() => {
+    fetchCate();
+  }, []);
+
+  const fetchCate = async () => {
+    try {
+      const res = await axios.get(
+        'http://localhost:8000/api/cates/get-categories'
+      );
+      setCates(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -120,10 +138,37 @@ export default function MainPost() {
             placeholder="what's on your mind?"
             onChange={(e) => setTitle(e.target.value)}
           />
-          <span>{title}</span>
-          <img src={image} alt="" width={300} />
+          <div className="Prev">
+            <div className="leftPrev">
+              <img src={image} alt="" width={300} />
+            </div>
+            <div className="rightPrev">
+              <label for="cates">Choose a category:</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {cates &&
+                  cates.map((cate, index) => (
+                    <option
+                      key={index}
+                      value={cate.name}
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      {cate.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          </div>
+
           <label htmlFor="file" className="OpModel">
             <i className="fa-solid fa-image photo-icon"></i>
+            <span>Photo</span>
+            <option>
+              <i className="fa-solid fa-video video-icon"></i>
+              <span>Video</span>
+            </option>
             <button className="BtnPost" type="submit">
               Post
             </button>

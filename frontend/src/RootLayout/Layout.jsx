@@ -10,7 +10,7 @@ export default function Layout() {
     checkLogin();
   }, []);
 
-  const { setLogged} = useContext(AuthContext);
+  const { setLogged } = useContext(AuthContext);
 
   const history = useNavigate();
   const checkLogin = async () => {
@@ -23,35 +23,8 @@ export default function Layout() {
     }
   };
 
-  
-  useEffect(() => {
-    fetchCateByName();
-  }, []);
-  console.log(name);
-
-  const fetchCateByName = async () => {
-    try {
-      if (name) {
-        const res = await axios.get(`http://localhost:8000/api/cate/${name}`);
-        setPosts(res.data);
-      } else {
-        const res = await axios.get('http://localhost:8000/api/cate/');
-        setPosts(res.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <>
-      {/* {loading ? (
-        <div className="loading">
-          <h2>LOADING......</h2>
-        </div>
-      ) : (
-        ''
-      )} */}
       <Navbar />
       <div className="mainPage">
         <SideBar />

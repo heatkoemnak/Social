@@ -1,4 +1,121 @@
 // POST
+
+.PostsContainer {
+  background-color: #ffffff;
+  margin: 10px;
+  width: 570px;
+
+  .postTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      .link {
+        text-decoration: none;
+        color: #000;
+      }
+      .username {
+        font-size: 16px;
+        font-weight: bold;
+        color: #000;
+        i {
+          margin-left: 5px;
+          color: rgb(62, 62, 255);
+        }
+      }
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+    .threeDot {
+      cursor: pointer;
+      i {
+        font-size: 20px;
+        color: rgb(55, 55, 76);
+        cursor: pointer;
+        text-transform: lowercase;
+      }
+      i:hover {
+        color: rgb(62, 62, 255);
+      }
+    }
+  }
+  .postCenter {
+    .postTitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: rgb(35, 32, 32);
+      padding: 7px;
+      cursor: text;
+      &::placeholder {
+        color: rgb(39, 37, 37);
+      }
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+  .postBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px;
+    .TextComment {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      i {
+        color: rgb(55, 55, 76);
+        font-size: 20px;
+        cursor: pointer;
+        text-transform: lowercase;
+      }
+      i:hover {
+        color: rgb(62, 62, 255);
+      }
+      .profile {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .CmtHolder {
+        height: 100%;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        height: 35px;
+        margin: 0 5px;
+        border-radius: 18px;
+        color: rgb(35, 32, 32);
+        background-color: rgb(236, 235, 235);
+        padding-left: 5px;
+        padding: 3px;
+
+        &::placeholder {
+          color: rgb(57, 57, 57);
+        }
+      }
+    }
+    .postBottomRight {
+      display: flex;
+      gap: 10px;
+      padding-left: 10px;
+    }
+  }
+}
+
 .mainPost {
   .postContainer {
     display: flex;
@@ -81,6 +198,10 @@
         background-color: rgba(5, 154, 20, 0.8);
       }
     }
+    .Prev {
+      display: flex;
+      width: 100%;
+    }
     .textArea {
       border: none;
       outline: none;
@@ -155,29 +276,21 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  // overflow: hidden;
   padding: 5px 10px;
-
   .post {
-    // height: 310px;
-    background-color: white;
-
-    // display: flex;
+    background-color: rgb(255, 255, 255);
     gap: 15px;
-    padding: 20px;
-    border-bottom: 1px solid rgb(196, 196, 196);
     .imageContainer {
       justify-content: center;
       align-items: center;
+      background-color: #450909;
+      margin: 0 auto;
+      width: 100%;
       .post-images {
         height: 550px;
         width: 100%;
+        width: 550px;
         object-fit: contain;
-        border-radius: 12px;
-        margin-top: 10px;
-      }
-      .views {
-        margin: 10px;
       }
     }
     .post_leftSide {

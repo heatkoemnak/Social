@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import './sidebar.scss';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -13,7 +12,7 @@ export default function SideBar() {
   const fetchCate = async () => {
     try {
       const res = await axios.get(
-        'http://localhost:8000/api/cate/get-categories'
+        'http://localhost:8000/api/cates/get-categories'
       );
       setCates(res.data);
     } catch (error) {
