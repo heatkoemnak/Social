@@ -3,6 +3,7 @@ const userModel = require('../models/userModel');
 const Cate = require('../models/cateModel');
 
 const cloudinary = require('../utils/cloudinary');
+const { post } = require('../routes/userRoute');
 
 const PostController = {
   async createPost(req, res) {
@@ -76,18 +77,22 @@ const PostController = {
     }
   },
   async deletePost(req, res) {
+    const user = await userModel.findById(req.user);
+    const post = await postModel.findById(req.params.id);
+
+    if (post.userId !== user._id) {
+      return res.status(400).json({ message: 'You can delete only your post' });
+    }
     try {
-      const post = await postModel.findById(req.params.id);
-      if (!post) {
-        return res.status(404).json('Post not found');
-      }
-      if (post.userId !== req.user) {
-        res.status(403).json('You can delete only your post');
-      } else {
-        await cloudinary.uploader.destroy(post.post_image);
-        await post.deleteOne();
-        res.status(200).json('The post has been deleted');
-      }
+      const cate = await Cate.find({
+        name: post.category,
+      });
+      const cateId = cate.map((cate) => cate._id);
+      await Cate.findByIdAndUpdate(cateId, {
+        $pull: { postId: post._id },
+      });
+      await post.deleteOne();
+      res.status(200).json('The post has been deleted');
     } catch (err) {
       res.status(500).json(err);
     }

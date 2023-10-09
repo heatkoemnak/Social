@@ -11,7 +11,7 @@ export default function MainPost() {
   const [posts, setPosts] = useState();
   const [category, setCategory] = useState();
   const [msg, setMag] = useState(null);
-  const [progress, setProgress] = useState({ stated: false, percentage: 0 });
+  const [progress, setProgress] = useState({ started: false, percentage: 0 });
   const { name } = useParams();
 
   const { setIsUser } = useContext(PostContext);
@@ -80,8 +80,26 @@ export default function MainPost() {
       setMag('Please fill in all fields!');
     }
     setMag('Uploading....');
+    setProgress((prevProgress) => {
+      return {
+        ...prevProgress,
+        started: true,
+      };
+    });
+
     await axios
-      .post(`http://localhost:8000/api/post/create-post`, formData)
+      .post(`http://localhost:8000/api/post/create-post`, formData, {
+        onUploadProgress: (progressEvent) => {
+          const { loaded, total } = progressEvent;
+          let percentage = Math.floor((loaded / total) * 100);
+          setProgress((prevProgress) => {
+            return {
+              ...prevProgress,
+              percentage: percentage,
+            };
+          });
+        },
+      })
       .then((res) => {
         setMag('Upload Successful!');
         setIsClick(!isClick);
@@ -152,14 +170,25 @@ export default function MainPost() {
             placeholder="what's on your mind?"
             onChange={(e) => setTitle(e.target.value)}
           />
-          {msg}
+          <div className="UploadProgress">
+            {progress.started && (
+              <progress
+                value={progress.percentage}
+                max="100"
+                className="progress"
+              />
+            )}
+            {msg && <span>{msg}</span>}
+          </div>
           <div className="Prev">
             <div className="leftPrev">
               <img src={image} alt="" width={300} />
             </div>
             <div className="rightPrev">
-              {category}
               <label for="cates">Choose a category:</label>
+              <div className="Cate">
+                <span>{category}</span>
+              </div>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
