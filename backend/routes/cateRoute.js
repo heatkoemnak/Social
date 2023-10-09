@@ -4,6 +4,6 @@ const cateController = require('../controller/cateController');
 router.post('/add-cate', cateController.addCate);
 router.get('/get-categories', cateController.getCates);
 router.get('/:name', cateController.getCateByName);
-router.get('/', cateController.getAllPosts);
+router.delete('/delete/:id', cateController.deleteCate);
 
 module.exports = router;
