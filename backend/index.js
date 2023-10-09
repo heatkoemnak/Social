@@ -45,7 +45,7 @@ app.listen(PORT, () => {
 });
 
 app.use('/api/auth', authRoute);
-app.use('/api/users', userRoute);
+app.use('/api/users', auth, userRoute);
 app.use('/api/friend', friendRoute);
 app.use('/api/post', auth, postRoute);
 app.use('/api/cates', auth, cateRoute);
