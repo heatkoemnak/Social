@@ -39,10 +39,11 @@ const cateController = {
       return res.status(500).json({ message: err.message });
     }
   },
-  getAllPosts: async (req, res) => {
+
+  deleteCate: async (req, res) => {
     try {
-      const posts = await postModel.find();
-      res.status(200).json(posts);
+      await Cate.findByIdAndDelete(req.params.id);
+      res.status(200).json({ message: 'Delete category successful' });
     } catch (err) {
       res.status(500).json(err);
     }
