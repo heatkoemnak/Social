@@ -10,6 +10,8 @@ export default function MainPost() {
   const [cates, setCates] = useState([]);
   const [posts, setPosts] = useState();
   const [category, setCategory] = useState();
+  const [msg, setMag] = useState(null);
+  const [progress, setProgress] = useState({ stated: false, percentage: 0 });
   const { name } = useParams();
 
   const { setIsUser } = useContext(PostContext);
@@ -28,7 +30,9 @@ export default function MainPost() {
         const res = await axios.get(`http://localhost:8000/api/cates/${name}`);
         setPosts(res.data);
       } else {
-        const res = await axios.get('http://localhost:8000/api/cates/');
+        const res = await axios.get(
+          'http://localhost:8000/api/post/get-all-post'
+        );
         setPosts(res.data);
       }
     } catch (error) {
@@ -68,12 +72,22 @@ export default function MainPost() {
     formData.append('image', file);
     formData.append('title', title);
     formData.append('category', category);
+    if (!file) {
+      setMag('Please choose a file!');
+      return;
+    }
+    if (!category || !title) {
+      setMag('Please fill in all fields!');
+    }
+    setMag('Uploading....');
     await axios
       .post(`http://localhost:8000/api/post/create-post`, formData)
       .then((res) => {
+        setMag('Upload Successful!');
         setIsClick(!isClick);
       })
       .catch((err) => {
+        setMag('Upload fail!');
         console.log(err);
       });
   };
@@ -138,11 +152,13 @@ export default function MainPost() {
             placeholder="what's on your mind?"
             onChange={(e) => setTitle(e.target.value)}
           />
+          {msg}
           <div className="Prev">
             <div className="leftPrev">
               <img src={image} alt="" width={300} />
             </div>
             <div className="rightPrev">
+              {category}
               <label for="cates">Choose a category:</label>
               <select
                 value={category}
