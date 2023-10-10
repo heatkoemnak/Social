@@ -11,7 +11,6 @@ export default function MainPost() {
   const [posts, setPosts] = useState();
   const [category, setCategory] = useState();
   const [msg, setMag] = useState(null);
-  const [progress, setProgress] = useState({ started: false, percentage: 0 });
   const { name } = useParams();
 
   const { setIsUser } = useContext(PostContext);
@@ -56,13 +55,39 @@ export default function MainPost() {
     setIsUser(true);
   };
 
-  const handleShowForm = () => {
-    setIsClick(!isClick);
-  };
-
   const handleChange = async (e) => {
     setFile(e.target.files[0]);
     setImage(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const DragImg = () => {
+    return (
+      <>
+        <label
+          htmlFor="file"
+          onDrag={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setFile(e.dataTransfer.files[0]);
+            setImage(URL.createObjectURL(e.dataTransfer.files[0]));
+          }}
+        >
+          <img
+            src="https://ajaxuploader.com/document/scr/images/drag-drop-file-upload.png"
+            alt=""
+            width={100}
+          />
+        </label>
+      </>
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -80,26 +105,9 @@ export default function MainPost() {
       setMag('Please fill in all fields!');
     }
     setMag('Uploading....');
-    setProgress((prevProgress) => {
-      return {
-        ...prevProgress,
-        started: true,
-      };
-    });
 
     await axios
-      .post(`http://localhost:8000/api/post/create-post`, formData, {
-        onUploadProgress: (progressEvent) => {
-          const { loaded, total } = progressEvent;
-          let percentage = Math.floor((loaded / total) * 100);
-          setProgress((prevProgress) => {
-            return {
-              ...prevProgress,
-              percentage: percentage,
-            };
-          });
-        },
-      })
+      .post(`http://localhost:8000/api/post/create-post`, formData)
       .then((res) => {
         setMag('Upload Successful!');
         setIsClick(!isClick);
@@ -118,8 +126,32 @@ export default function MainPost() {
           name="post"
           placeholder="what's on your mind?"
           className="mindInput"
-          onClick={() => handleShowForm()}
+          onClick={() => setIsClick(!isClick)}
         />
+      </>
+    );
+  };
+
+  const Loading = () => {
+    return (
+      <>
+        <div className="Loading">
+          <i className="fa-solid fa-spinner fa-spin-pulse"></i>
+          <h2>Loading...</h2>
+        </div>
+      </>
+    );
+  };
+  const Uploading = () => {
+    return (
+      <>
+        <div className="Uploading">
+          <i class="fa-solid fa-cloud-arrow-up fa-fade icon-upload"></i>
+          <div>
+            <i class="fa-solid fa-spinner fa-shake icon"></i>
+            <h2>Uploading...</h2>
+          </div>
+        </div>
       </>
     );
   };
@@ -139,15 +171,27 @@ export default function MainPost() {
     }
   };
 
+  const RemoveAction = () => {
+    setFile('');
+    setImage('');
+    setCategory('');
+    setTitle('');
+    setMag('');
+    setIsClick(!isClick);
+  };
+
+  
+
   return (
     <div className="mainPost">
       <div className="postContainer">
-        <Link to={`/profile/${authUsername}`}>
-          <img src={authProfile} alt="" className="userProfile" />
-        </Link>
-        {!isClick ? <Input /> : null}
-
-        <input type="file" name="" className="fileInput" />
+        <div className="postHeader">
+          <Link to={`/profile/${authUsername}`}>
+            <img src={authProfile} alt="" className="userProfile" />
+          </Link>
+          {!isClick ? <Input /> : null}
+          <input type="file" name="" className="fileInput" />
+        </div>
         <button className="BtnPost">Post</button>
       </div>
       {isClick ? (
@@ -160,7 +204,7 @@ export default function MainPost() {
             <div className="flexIcon">
               <i
                 className="fa-solid fa-xmark fa-fade fa-3xs delete-icon "
-                onClick={() => handleShowForm()}
+                onClick={RemoveAction}
               ></i>
             </div>
           </div>
@@ -170,22 +214,19 @@ export default function MainPost() {
             placeholder="what's on your mind?"
             onChange={(e) => setTitle(e.target.value)}
           />
-          <div className="UploadProgress">
-            {progress.started && (
-              <progress
-                value={progress.percentage}
-                max="100"
-                className="progress"
-              />
-            )}
-            {msg && <span>{msg}</span>}
-          </div>
+          <div className="UploadProgress">{msg && <Uploading />}</div>
           <div className="Prev">
             <div className="leftPrev">
-              <img src={image} alt="" width={300} />
+              {image ? (
+                <i
+                  className="fa-solid fa-xmark fa-fade fa-3xs delete-icon "
+                  onClick={() => setImage()}
+                ></i>
+              ) : null}
+              {image ? <img src={image} alt="" width={300} /> : <DragImg />}
             </div>
             <div className="rightPrev">
-              <label for="cates">Choose a category:</label>
+              <label for="cates">Category:</label>
               <div className="Cate">
                 <span>{category}</span>
               </div>
@@ -207,13 +248,14 @@ export default function MainPost() {
             </div>
           </div>
 
-          <label htmlFor="file" className="OpModel">
-            <i className="fa-solid fa-image photo-icon"></i>
-            <span>Photo</span>
-            <option>
-              <i className="fa-solid fa-video video-icon"></i>
-              <span>Video</span>
-            </option>
+          <label className="OpModel">
+            <div className="Icon">
+              <label htmlFor="file">
+                <i className="fa-solid fa-image photo-icon icon"></i>
+              </label>
+              <i className="fa-solid fa-paperclip icon"></i>
+              <i class="fa-solid fa-video icon"></i>
+            </div>
             <button className="BtnPost" type="submit">
               Post
             </button>
@@ -230,7 +272,12 @@ export default function MainPost() {
           />
         </form>
       ) : null}
-      {posts && posts.map((p, index) => <Post key={index} post={p} />)}
+
+      {posts ? (
+        posts && posts.map((p, index) => <Post key={index} post={p} />)
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 }

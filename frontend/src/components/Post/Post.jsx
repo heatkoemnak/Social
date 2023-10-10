@@ -12,10 +12,12 @@ export default function Post({ post }) {
   const [authUsername, setAuthUsername] = useState();
   const { userId } = useContext(AuthContext);
   const { setIsUser, users } = useContext(PostContext);
+  const [threeDot, setThreeDot] = useState(false);
 
   const username = users.filter((u) => u._id === post.userId)[0]?.username;
   const profilePicture = users.filter((u) => u._id === post.userId)[0]
     ?.profilePicture;
+
   const now = new Date(post.createdAt);
   const GetAuth = () => {
     if (localStorage.getItem('user')) {
@@ -57,6 +59,35 @@ export default function Post({ post }) {
     setIsLiked(!isLiked);
   };
 
+  const DeletePost = async () => {
+    try {
+      await axios
+        .delete(`http://localhost:8000/api/post/delete-post/${post._id}`)
+        .then((res) => {
+          console.log(res.data);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+    setLike(isLiked ? likes - 1 : likes + 1);
+    setIsLiked(!isLiked);
+  };
+
+  const ThreeDot = () => {
+    return (
+      <>
+        <div className="threeDots">
+          <i
+            class="fa-solid fa-xmark fa-fade fa-3xs"
+            onClick={() => setThreeDot(false)}
+          ></i>
+          <span>Edit Post</span>
+          <span onClick={DeletePost}>Delete Post</span>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       <div className="PostsContainer">
@@ -82,7 +113,14 @@ export default function Post({ post }) {
             <i className="fa-solid fa-earth-americas"></i>
           </div>
           <div className="threeDot">
-            <i className="fas fa-ellipsis-h"></i>
+            {!threeDot ? (
+              <i
+                className="fas fa-ellipsis-h"
+                onClick={() => setThreeDot(true)}
+              ></i>
+            ) : (
+              <ThreeDot />
+            )}
           </div>
         </div>
         <div className="postCenter">
@@ -117,66 +155,6 @@ export default function Post({ post }) {
           </div>
         </div>
       </div>
-
-      {/* <div className="posts">
-        <div className="post">
-          <div className="post_leftSide">
-            <div className="post-left-top">
-              <div className="author">
-                <Link to={`/profile/${username}`}>
-                  <img
-                    className="author_images"
-                    onClick={IsAuth}
-                    src={
-                      profilePicture
-                        ? profilePicture
-                        : 'https://img.myloview.com/stickers/default-avatar-profile-icon-social-media-user-image-400-251200044.jpg'
-                    }
-                    alt=""
-                  />
-                </Link>
-                <div className="author_info">
-                  <Link to={`/profile/${username}`}>
-                    <span className="author-name" onClick={IsAuth}>
-                      {username}
-                      <i className="fa-solid fa-circle-check"></i>
-                    </span>
-                  </Link>
-                  <div className="flex-time">
-                    <p className="post-time">{now.getDay()} days ago</p>
-                    <i className="fa-solid fa-earth-americas"></i>
-                  </div>
-                </div>
-              </div>
-              <div className="post-body">
-                <p className="post-decs">{post.desc}</p>
-              </div>
-              <div className="imageContainer">
-                <img className="post-images" src={post?.post_image} alt="" />
-              </div>
-            </div>
-            <div className="share_post">
-              <Link to={`/profile/${authUsername}`}>
-                <img src={authProfile} alt="" className="userProfile" />
-              </Link>
-              <input
-                type="text"
-                name=""
-                className="CmtHolder"
-                placeholder="write a comment.."
-              />
-              <span className="heart-count">{likes}</span>
-              <i className="far fa-heart" onClick={handleClick}></i>
-              <span className="heart-count">{post.comments.length}</span>
-              <i className="far fa-comment"></i>
-              <span>Comments</span>
-              <span className="heart-count">{post.share.length}</span>
-              <i className="far fa-paper-plane"></i>
-              <span>Share</span>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 }
