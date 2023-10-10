@@ -28,7 +28,6 @@ export default function Navbar() {
   useEffect(() => {
     GetAuth();
   }, []);
-
   const GetAuth = () => {
     if (localStorage.getItem('user')) {
       const isAuth = JSON.parse(localStorage.getItem('user'));
