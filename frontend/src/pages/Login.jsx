@@ -23,6 +23,9 @@ export default function Login() {
   useEffect(() => {
     checkLogin();
   }, []);
+  useEffect(() => {
+    handleSubmit();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,19 +46,17 @@ export default function Login() {
             history('/');
           });
       } catch (err) {
-        console.log(err);
+        toast.error(err.response.data.message, {
+          position: 'top-center',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+        });
       }
-      // try {
-      //   await axios.get('http://localhost:8000/api/auth/user').then((res) => {
-      //     localStorage.setItem('user', JSON.stringify(res.data));
-      //     setLogged(true);
-      //     history('/');
-      //   });
-
-      //   history('/');
-      // } catch (err) {
-      //   console.log(err);
-      // }
     } else {
       toast.error(err.response.data.message, {
         position: 'top-center',
