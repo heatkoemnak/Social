@@ -13,6 +13,7 @@ export default function Post({ post }) {
   const { userId } = useContext(AuthContext);
   const { setIsUser, users } = useContext(PostContext);
   const [threeDot, setThreeDot] = useState(false);
+  const [msg, setMsg] = useState(null);
 
   const username = users.filter((u) => u._id === post.userId)[0]?.username;
   const profilePicture = users.filter((u) => u._id === post.userId)[0]
@@ -61,10 +62,16 @@ export default function Post({ post }) {
 
   const DeletePost = async () => {
     try {
+      setMsg('Deleting post...');
       await axios
         .delete(`http://localhost:8000/api/post/delete-post/${post._id}`)
         .then((res) => {
-          console.log(res.data);
+          setMsg(
+            'Post has been deleted. You will be redirected to the home page.'
+          );
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         });
     } catch (err) {
       console.log(err);
@@ -78,7 +85,7 @@ export default function Post({ post }) {
       <>
         <div className="threeDots">
           <i
-            class="fa-solid fa-xmark fa-fade fa-3xs"
+            className="fa-solid fa-xmark fa-fade fa-3xs"
             onClick={() => setThreeDot(false)}
           ></i>
           <span>Edit Post</span>
@@ -90,6 +97,7 @@ export default function Post({ post }) {
 
   return (
     <>
+      {msg}
       <div className="PostsContainer">
         <div className="postTop">
           <div className="profile">

@@ -76,12 +76,11 @@ const PostController = {
     }
   },
   async deletePost(req, res) {
-    const post = await postModel.findById(req.params.id);
-
-    const cate = await Cate.find({
-      name: post.category,
-    });
     try {
+      const post = await postModel.findById(req.params.id);
+      const cate = await Cate.find({
+        name: post.category,
+      });
       const cateId = cate.map((cate) => cate._id);
       await Cate.findByIdAndUpdate(cateId, {
         $pull: { postId: post._id },
@@ -93,7 +92,6 @@ const PostController = {
     } catch (err) {
       res.status(500).json(err);
     }
-    res.status(200).json(cate);
   },
 
   async LikeUnLike(req, res) {

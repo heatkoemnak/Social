@@ -180,8 +180,6 @@ export default function MainPost() {
     setIsClick(!isClick);
   };
 
-  
-
   return (
     <div className="mainPost">
       <div className="postContainer">
