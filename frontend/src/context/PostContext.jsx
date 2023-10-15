@@ -12,7 +12,7 @@ export const PostContextProvider = (props) => {
   }, []);
 
   const fetchUsers = async () => {
-    await axios.get('http://localhost:8000/api/users/all-user').then((res) => {
+    await axios.get('http://localhost:8000/api/users/all-users').then((res) => {
       setUsers(res.data);
     });
   };

@@ -11,10 +11,20 @@ export default function Post({ post }) {
   const [authProfile, setAuthProfile] = useState();
   const [authUsername, setAuthUsername] = useState();
   const { userId } = useContext(AuthContext);
-  const { setIsUser, users } = useContext(PostContext);
+  const { setIsUser } = useContext(PostContext);
   const [threeDot, setThreeDot] = useState(false);
-  const [msg, setMsg] = useState(null);
   const [isDelete, setDelete] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    await axios.get('http://localhost:8000/api/users/all-users').then((res) => {
+      setUsers(res.data);
+    });
+  };
 
   const username = users.filter((u) => u._id === post.userId)[0]?.username;
   const profilePicture = users.filter((u) => u._id === post.userId)[0]
@@ -96,7 +106,6 @@ export default function Post({ post }) {
         .then(window.location.reload());
       window.history.back();
       router.push('/');
-      setMsg('Post deleted successfully');
       setTimeout(() => {
         setMsg(null);
       }, 2000);

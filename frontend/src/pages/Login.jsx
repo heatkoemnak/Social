@@ -23,9 +23,6 @@ export default function Login() {
   useEffect(() => {
     checkLogin();
   }, []);
-  useEffect(() => {
-    handleSubmit();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

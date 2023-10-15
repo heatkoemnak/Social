@@ -4,7 +4,7 @@ import { PostContext } from '../../context/PostContext';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 
-export default function MainPost() {
+export default function Feed() {
   const [authProfile, setAuthProfile] = useState();
   const [authUsername, setAuthUsername] = useState();
   const [cates, setCates] = useState([]);
@@ -18,6 +18,8 @@ export default function MainPost() {
   const [file, setFile] = useState('');
   const [image, setImage] = useState('');
   const [title, setTitle] = useState('');
+
+  
 
   useEffect(() => {
     fetchCateByName();
@@ -205,12 +207,7 @@ export default function MainPost() {
                 ></i>
               </div>
             </div>
-            {/* <input
-              type="text"
-              className="textArea"
-              placeholder="what's on your mind?"
-              onChange={(e) => setTitle(e.target.value)}
-            /> */}
+
             <textarea
               className="textArea"
               placeholder="write something here..."
@@ -274,7 +271,7 @@ export default function MainPost() {
         ) : null}
 
         {posts ? (
-          posts && posts.map((p, index) => <Post key={index} post={p} />)
+          posts.map((p, index) => <Post key={index} post={p} />)
         ) : (
           <Loading />
         )}
