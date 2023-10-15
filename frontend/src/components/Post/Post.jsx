@@ -14,6 +14,7 @@ export default function Post({ post }) {
   const { setIsUser, users } = useContext(PostContext);
   const [threeDot, setThreeDot] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [isDelete, setDelete] = useState(false);
 
   const username = users.filter((u) => u._id === post.userId)[0]?.username;
   const profilePicture = users.filter((u) => u._id === post.userId)[0]
@@ -60,24 +61,48 @@ export default function Post({ post }) {
     setIsLiked(!isLiked);
   };
 
+  const DeletePermission = () => {
+    if (username == authUsername) {
+      setThreeDot(false);
+      setDelete(true);
+    } else {
+      alert('You are not allowed to delete this post');
+      setThreeDot(false);
+    }
+  };
+
+  const SureToDelete = () => {
+    return (
+      <>
+        <div className="deletePost">
+          <span>Are you sure you want to delete this post?</span>
+          <div className="deleteBtn">
+            <button className="delete" onClick={DeletePost}>
+              Yes
+            </button>
+            <button className="cancel" onClick={() => setDelete(false)}>
+              No
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   const DeletePost = async () => {
     try {
-      setMsg('Deleting post...');
       await axios
         .delete(`http://localhost:8000/api/post/delete-post/${post._id}`)
-        .then((res) => {
-          setMsg(
-            'Post has been deleted. You will be redirected to the home page.'
-          );
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        });
+        .then(window.location.reload());
+      window.history.back();
+      router.push('/');
+      setMsg('Post deleted successfully');
+      setTimeout(() => {
+        setMsg(null);
+      }, 2000);
     } catch (err) {
       console.log(err);
     }
-    setLike(isLiked ? likes - 1 : likes + 1);
-    setIsLiked(!isLiked);
   };
 
   const ThreeDot = () => {
@@ -85,11 +110,19 @@ export default function Post({ post }) {
       <>
         <div className="threeDots">
           <i
-            className="fa-solid fa-xmark fa-fade fa-3xs"
+            className="fa-solid fa-xmark fa-fade fa-3xs delete-icon"
             onClick={() => setThreeDot(false)}
           ></i>
-          <span>Edit Post</span>
-          <span onClick={DeletePost}>Delete Post</span>
+          <span>
+            <i className="fa-solid fa-pen-to-square icon"></i>Edit post
+          </span>
+          <span onClick={DeletePermission}>
+            <i className="fa-solid fa-trash icon"></i>
+            Delete post
+          </span>
+          <span>
+            <i className="fa-solid fa-lock icon"></i>Edit privacy
+          </span>
         </div>
       </>
     );
@@ -97,7 +130,8 @@ export default function Post({ post }) {
 
   return (
     <>
-      {msg}
+      {isDelete ? <SureToDelete /> : null}
+
       <div className="PostsContainer">
         <div className="postTop">
           <div className="profile">
