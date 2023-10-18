@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../Context';
 import { PostContext } from '../../context/PostContext';
 import axios from 'axios';
+import Loading from '../Custom/Loading';
 
 export default function Post({ post }) {
   const [likes, setLike] = useState(post.likes.length);
@@ -15,6 +16,7 @@ export default function Post({ post }) {
   const [threeDot, setThreeDot] = useState(false);
   const [isDelete, setDelete] = useState(false);
   const [users, setUsers] = useState([]);
+  const [msg, setMsg] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -81,34 +83,53 @@ export default function Post({ post }) {
     }
   };
 
-  const SureToDelete = () => {
+  const VerifyDelete = () => {
     return (
       <>
         <div className="deletePost">
-          <span>Are you sure you want to delete this post?</span>
-          <div className="deleteBtn">
-            <button className="delete" onClick={DeletePost}>
-              Yes
-            </button>
-            <button className="cancel" onClick={() => setDelete(false)}>
-              No
-            </button>
-          </div>
+          {msg ? (
+            <Loading msg={msg} />
+          ) : (
+            <>
+              <span>Are you sure you want to delete this post?</span>
+              <div className="deleteBtn">
+                <button className="delete" onClick={HandleDeletePost}>
+                  Yes
+                </button>
+                <button className="cancel" onClick={() => setDelete(false)}>
+                  No
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </>
     );
   };
 
-  const DeletePost = async () => {
+  const HandleDeletePost = async () => {
     try {
+      setMsg(
+        <span className="msg" style={{ color: 'red' }}>
+          <i className="fa-solid fa-spinner fa-spin-pulse"></i>
+          Deleting post...
+        </span>
+      );
       await axios
         .delete(`http://localhost:8000/api/post/delete-post/${post._id}`)
-        .then(window.location.reload());
-      window.history.back();
-      router.push('/');
-      setTimeout(() => {
-        setMsg(null);
-      }, 2000);
+        .then(() => {
+          setDelete(false);
+        })
+        .finally(
+          setTimeout(() => {
+            setMsg(
+              <span className="msg" style={{ color: 'green' }}>
+                Post deleted successfully!
+              </span>
+            );
+          }, 2000),
+          window.location.reload()
+        );
     } catch (err) {
       console.log(err);
     }
@@ -139,7 +160,7 @@ export default function Post({ post }) {
 
   return (
     <>
-      {isDelete ? <SureToDelete /> : null}
+      {isDelete ? <VerifyDelete /> : null}
 
       <div className="PostsContainer">
         <div className="postTop">

@@ -7,15 +7,15 @@ export const PostContextProvider = (props) => {
   const [users, setUsers] = useState([]);
   const [isUser, setIsUser] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, []);
 
-  const fetchUsers = async () => {
-    await axios.get('http://localhost:8000/api/users/all-users').then((res) => {
-      setUsers(res.data);
-    });
-  };
+  // const fetchUsers = async () => {
+  //   await axios.get('http://localhost:8000/api/users/all-users').then((res) => {
+  //     setUsers(res.data);
+  //   });
+  // };
 
   const value = {
     isUser,

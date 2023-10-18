@@ -12,9 +12,12 @@ export default function Profile() {
   const [posts, setPosts] = useState([]);
   const [followings, setFollowings] = useState([]);
   const [followers, setFollowers] = useState([]);
+  const [auth, setAuth] = useState();
+  const [isFollow, setFollow] = useState(true);
+
   const { username } = useParams();
-  const [authProfile, setAuthProfile] = useState();
-  const [authUsername, setAuthUsername] = useState();
+  const [msg, setMsg] = useState(localStorage.getItem('friend'));
+  const navigate = useNavigate();
 
   const { setLogged } = useContext(AuthContext);
   const { isUser } = useContext(PostContext);
@@ -43,16 +46,39 @@ export default function Profile() {
   useEffect(() => {
     GetAuth();
   }, []);
-  const history = useNavigate();
 
   const GetAuth = () => {
     if (localStorage.getItem('user') && localStorage.getItem('token')) {
       const isAuth = JSON.parse(localStorage.getItem('user'));
-      setAuthProfile(isAuth.profilePicture);
-      setAuthUsername(isAuth.username);
+      setAuth(isAuth._id);
+      setLogged(true);
     } else {
       setLogged(false);
-      history('/login');
+      navigate('/login');
+    }
+  };
+
+  const handleFollow = async () => {
+    let CheckFollow;
+    try {
+      await axios
+        .post(`http://localhost:8000/api/friend/add-un-friend`, {
+          friend_id: users._id,
+        })
+        .then((res) => {
+          localStorage.setItem('friend', res.data);
+          if (localStorage.getItem('friend')) {
+            CheckFollow = localStorage.getItem('friend');
+            setMsg(CheckFollow);
+            if (msg == 'Follow') {
+              setFollow(true);
+            } else {
+              setFollow(false);
+            }
+          }
+        });
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -71,7 +97,16 @@ export default function Profile() {
     return (
       <>
         <div className="followBtn">
-          <button className="btnFollow">Follow</button>
+          <button className="btnFollow" onClick={handleFollow}>
+            {msg && msg}
+            {
+              <i
+                className={
+                  isFollow ? `fa-solid fa-user-check ` : 'fa-solid fa-user-plus'
+                }
+              ></i>
+            }
+          </button>
           <button className="BtnMessage">Message</button>
         </div>
       </>
@@ -155,11 +190,9 @@ export default function Profile() {
         <TopProfile />
         <div className="BottomProfile">
           <div className="PostContainer">
-            {posts.map((p) => (
-              <Post key={p._id} post={p} />
-            ))}
+            {posts && posts.map((p) => <Post key={p._id} post={p} />)}
           </div>
-          <Friends />
+          <Friends username={username} />
         </div>
       </div>
     </>

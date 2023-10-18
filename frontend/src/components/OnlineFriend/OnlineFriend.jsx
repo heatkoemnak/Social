@@ -1,20 +1,16 @@
 import './onlineFriend.scss';
 
-export default function OnlineFriend(users) {
+export default function OnlineFriend({ user }) {
   return (
     <>
       <div className="onlineContainer">
         <div className="online-friends">
           <div className="online-friend">
             <div className="online-image-container">
-              <img
-                className="online-image"
-                src={users.user.profilePicture}
-                alt=""
-              />
+              <img className="online-image" src={user?.profilePicture} alt="" />
               <span className="online"></span>
               <div className="online-badge">
-                <p>{users.user.username}</p>
+                <p>{user?.username}</p>
                 <button
                   className="onlineBtn"
                   type="submit"

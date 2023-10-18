@@ -11,7 +11,8 @@ export default function Navbar() {
 
   const logout = () => {
     axios.get('http://localhost:8000/api/auth/logout').then((res) => {
-      localStorage.clear();
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
       window.location.href = '/';
     });
   };

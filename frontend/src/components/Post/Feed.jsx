@@ -3,6 +3,9 @@ import Post from './Post';
 import { PostContext } from '../../context/PostContext';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
+import Uploading from '../Custom/Uploading';
+import Loading from '../Custom/Loading';
+import './feed.scss';
 
 export default function Feed() {
   const [authProfile, setAuthProfile] = useState();
@@ -10,7 +13,7 @@ export default function Feed() {
   const [cates, setCates] = useState([]);
   const [posts, setPosts] = useState();
   const [category, setCategory] = useState();
-  const [msg, setMag] = useState(null);
+  const [msg, setMsg] = useState(null);
   const { name } = useParams();
 
   const { setIsUser } = useContext(PostContext);
@@ -19,22 +22,24 @@ export default function Feed() {
   const [image, setImage] = useState('');
   const [title, setTitle] = useState('');
 
-  
-
   useEffect(() => {
-    fetchCateByName();
+    fetchPosts();
   }, [name]);
 
-  const fetchCateByName = async () => {
+  const fetchPosts = async () => {
     try {
       if (name) {
-        const res = await axios.get(`http://localhost:8000/api/cates/${name}`);
-        setPosts(res.data);
+        await axios
+          .get(`http://localhost:8000/api/cates/${name}`)
+          .then((res) => {
+            setPosts(res.data);
+          });
       } else {
-        const res = await axios.get(
-          'http://localhost:8000/api/post/get-all-post'
-        );
-        setPosts(res.data);
+        await axios
+          .get('http://localhost:8000/api/post/get-all-post')
+          .then((res) => {
+            setPosts(res.data);
+          });
       }
     } catch (error) {
       console.log(error);
@@ -100,20 +105,53 @@ export default function Feed() {
     formData.append('title', title);
     formData.append('category', category);
     if (!file) {
-      setMag('Please choose a file!');
+      setMsg('Please choose a file!');
       return;
     }
     if (!category || !title) {
-      setMag('Please fill in all fields!');
+      setMsg('Please fill in all fields!');
     }
-    setMag('Uploading....');
+    setMsg(
+      <span
+        className="msg"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '10vh',
+          fontSize: '1rem',
+        }}
+      >
+        <i className="fa-solid fa-spinner fa-spin-pulse"></i>
+        Post have been uploading!
+      </span>
+    );
     await axios
       .post(`http://localhost:8000/api/post/create-post`, formData)
-      .then((res) => {
+      .then(() => {
         setIsClick(!isClick);
-      });
+      })
+      .finally(
+        setTimeout(() => {
+          setMsg(
+            <span
+              className="msg"
+              style={{
+                color: 'green',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '10vh',
+                fontSize: '1rem',
+              }}
+            >
+              Uploaded Succeed!
+            </span>
+          );
+        }, 1500)
+      );
     window.location.reload().catch((err) => {
-      setMag('Upload fail!');
+      setMsg('Upload fail!');
       console.log(err);
     });
   };
@@ -124,10 +162,11 @@ export default function Feed() {
 
   const fetchCate = async () => {
     try {
-      const res = await axios.get(
-        'http://localhost:8000/api/cates/get-categories'
-      );
-      setCates(res.data);
+      await axios
+        .get('http://localhost:8000/api/cates/get-categories')
+        .then((res) => {
+          setCates(res.data);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -138,7 +177,7 @@ export default function Feed() {
     setImage('');
     setCategory('');
     setTitle('');
-    setMag('');
+    setMsg('');
     setIsClick(!isClick);
   };
 
@@ -152,30 +191,6 @@ export default function Feed() {
           className="mindInput"
           onClick={() => setIsClick(!isClick)}
         />
-      </>
-    );
-  };
-
-  const Loading = () => {
-    return (
-      <>
-        <div className="Loading">
-          <i className="fa-solid fa-spinner fa-spin-pulse"></i>
-          <h2>Loading...</h2>
-        </div>
-      </>
-    );
-  };
-  const Uploading = () => {
-    return (
-      <>
-        <div className="Uploading">
-          <i class="fa-solid fa-cloud-arrow-up fa-fade icon-upload"></i>
-          <div>
-            <i class="fa-solid fa-spinner fa-shake icon"></i>
-            <h2>Uploading...</h2>
-          </div>
-        </div>
       </>
     );
   };
@@ -207,46 +222,49 @@ export default function Feed() {
                 ></i>
               </div>
             </div>
-
-            <textarea
-              className="textArea"
-              placeholder="write something here..."
-              onChange={(e) => setTitle(e.target.value)}
-            ></textarea>
-            <div className="uploadProgress">{msg && <Uploading />}</div>
-            <div className="Prev">
-              <div className="leftPrev">
-                {image ? (
-                  <i
-                    className="fa-solid fa-xmark fa-fade fa-3xs delete-icon "
-                    onClick={() => setImage()}
-                  ></i>
-                ) : null}
-                {image ? <img src={image} alt="" width={300} /> : <DragImg />}
-              </div>
-              <div className="Categories">
-                <label for="cates">Category:</label>
-                <div className="Cate">
-                  <span>{category}</span>
+            {msg ? (
+              <Loading msg={msg} />
+            ) : (
+              <>
+                <textarea
+                  className="textArea"
+                  placeholder="write something here..."
+                  onChange={(e) => setTitle(e.target.value)}
+                ></textarea>
+                <div className="Prev">
+                  <div className="PreviewImg">
+                    {image ? (
+                      <i
+                        className="fa-solid fa-xmark fa-fade fa-3xs delete-icon "
+                        onClick={() => setImage()}
+                      ></i>
+                    ) : null}
+                    {image ? <img src={image} alt="" /> : <DragImg />}
+                  </div>
+                  <div className="Categories">
+                    <label for="cates">Category:</label>
+                    <div className="Cate">
+                      <span>{category}</span>
+                    </div>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      {cates &&
+                        cates.map((cate, index) => (
+                          <option
+                            key={index}
+                            value={cate.name}
+                            onChange={(e) => setCategory(e.target.value)}
+                          >
+                            {cate.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                 </div>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  {cates &&
-                    cates.map((cate, index) => (
-                      <option
-                        key={index}
-                        value={cate.name}
-                        onChange={(e) => setCategory(e.target.value)}
-                      >
-                        {cate.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            </div>
-
+              </>
+            )}
             <label className="OpModel">
               <div className="Icon">
                 <label htmlFor="file">
