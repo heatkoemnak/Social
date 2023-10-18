@@ -207,3 +207,38 @@ export const Posts = [
     views: 322,
   },
 ];
+
+export const Notifications = [
+  {
+    id: 1,
+    message: 'New Post has been added.',
+
+    date: 'Today at 7:00 PM',
+    seen: false,
+    postId: 1,
+  },
+  {
+    id: 1,
+    message: 'Someone liked your post.',
+
+    date: 'Yesterday at 10:00 AM',
+    seen: true,
+    postId: 5,
+  },
+  {
+    id: 3,
+    message: 'Your profile picture has been updated.',
+
+    date: 'Monday at 4:00 PM',
+    seen: false,
+    postId: 1,
+  },
+  {
+    id: 4,
+    message: 'Your profile picture has been updated.',
+
+    date: 'Monday at 4:00 PM',
+    seen: false,
+    postId: 3,
+  },
+];
