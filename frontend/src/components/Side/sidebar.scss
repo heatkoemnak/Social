@@ -1,7 +1,14 @@
-.sidebarContainer {
+.SideBar {
   flex: 1;
+  position: sticky;
+  top: 8vh;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.sidebarContainer {
   background-color: rgb(255, 255, 255);
-  height: 80vh;
+  height: 50vh;
   overflow: scroll;
   overflow-x: hidden;
   width: 100%;
@@ -13,6 +20,7 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 20px;
+
       .sideBar__title {
         h2 {
           font-size: 18px;
