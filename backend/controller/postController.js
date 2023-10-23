@@ -28,13 +28,20 @@ const PostController = {
         $push: { postId: newPost._id },
       });
 
+      await userModel.findByIdAndUpdate(
+        req.user,
+        {
+          $push: { posts: newPost._id },
+        },
+        { new: true, useFindAndModify: false }
+      );
+
       res.status(200).json(newPost);
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
-  //get all posts
   async getAllPost(req, res) {
     try {
       const posts = await postModel.find().sort({ createdAt: -1 });
@@ -86,6 +93,13 @@ const PostController = {
         $pull: { postId: post._id },
       });
       await post.deleteOne();
+      await userModel.findByIdAndUpdate(
+        req.user,
+        {
+          $pull: { posts: post._id },
+        },
+        { new: true, useFindAndModify: false }
+      );
       await post.save();
 
       res.status(200).json('The post has been deleted');

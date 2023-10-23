@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const friendController = require('../controller/friendController');
-router.post('/add-un-friend', friendController.addUnfriend);
+router.post('/addUnFriend', friendController.addUnFriend);
 router.get(
   '/all-follower-and-following-friend/:id',
   friendController.GetAllFollowerAndFollowing

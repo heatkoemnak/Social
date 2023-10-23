@@ -4,7 +4,7 @@ import axios from 'axios';
 import Cate from '../../Categories/Cate';
 import Noti from '../Notification/Noti';
 
-export default function SideBar() {
+export default function SideBar({ socket }) {
   const [Cates, setCates] = useState([]);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function SideBar() {
             </div>
           </div>
         </div>
-        <Noti />
+        <Noti socket={socket} />
       </div>
     </>
   );

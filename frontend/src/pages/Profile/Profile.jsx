@@ -6,17 +6,19 @@ import Post from '../../components/Post/Post';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../../Context';
 import { PostContext } from '../../context/PostContext';
+import moment from 'moment';
 
-export default function Profile() {
+export default function Profile({ socket }) {
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [followings, setFollowings] = useState([]);
   const [followers, setFollowers] = useState([]);
-  const [auth, setAuth] = useState();
-  const [isFollow, setFollow] = useState(true);
+  const [authId, setAuth] = useState();
+  const [authUsername, setAuthUsername] = useState('');
+  const [authProfile, setAuthProfile] = useState('');
 
   const { username } = useParams();
-  const [msg, setMsg] = useState(localStorage.getItem('friend'));
+  const [msg, setMsg] = useState();
   const navigate = useNavigate();
 
   const { setLogged } = useContext(AuthContext);
@@ -51,34 +53,52 @@ export default function Profile() {
     if (localStorage.getItem('user') && localStorage.getItem('token')) {
       const isAuth = JSON.parse(localStorage.getItem('user'));
       setAuth(isAuth._id);
+      setAuthUsername(isAuth.username);
+      setAuthProfile(isAuth.profilePicture);
       setLogged(true);
     } else {
       setLogged(false);
       navigate('/login');
     }
   };
+  useEffect(() => {
+    setMsg(
+      followers.find((follower) => follower._id === authId)
+        ? 'Unfollow'
+        : 'Follow'
+    );
+  }, [followers.find((follower) => follower._id === authId)]);
 
   const handleFollow = async () => {
-    let CheckFollow;
     try {
       await axios
-        .post(`http://localhost:8000/api/friend/add-un-friend`, {
+        .post(`http://localhost:8000/api/friend/addUnFriend`, {
           friend_id: users._id,
         })
         .then((res) => {
-          localStorage.setItem('friend', res.data);
-          if (localStorage.getItem('friend')) {
-            CheckFollow = localStorage.getItem('friend');
-            setMsg(CheckFollow);
-            if (msg == 'Follow') {
-              setFollow(true);
-            } else {
-              setFollow(false);
-            }
-          }
+          setMsg(res.data);
         });
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data.message);
+    }
+    if (msg == 'Follow') {
+      socket.emit('addUnFriend', {
+        senderName: authUsername,
+        receiverName: users.username,
+        message: `You got follow from ${authUsername}`,
+        senderProfile: authProfile,
+        date: moment(Date.now()).format('DD/MM/YYYY'),
+        postId: users._id,
+      });
+    } else {
+      socket.emit('addUnFriend', {
+        senderName: authUsername,
+        receiverName: users.username,
+        message: `You got unfollow from ${authUsername}`,
+        senderProfile: authProfile,
+        date: moment(Date.now()).format('DD/MM/YYYY'),
+        postId: users._id,
+      });
     }
   };
 
@@ -99,13 +119,13 @@ export default function Profile() {
         <div className="followBtn">
           <button className="btnFollow" onClick={handleFollow}>
             {msg && msg}
-            {
+            {/* {
               <i
                 className={
                   isFollow ? `fa-solid fa-user-check ` : 'fa-solid fa-user-plus'
                 }
               ></i>
-            }
+            } */}
           </button>
           <button className="BtnMessage">Message</button>
         </div>
@@ -143,17 +163,23 @@ export default function Profile() {
             <div className="authTexts">
               <h4 className="authName">{username}</h4>
               <span className="authBio">Dear My friends</span>
+              <div className="follow">
+                <p>{followers ? followers.length : '0'}</p>
+                <span>followers</span>
+                <p>{followings ? followings.length : '0'}</p>
+                <span>followings</span>
+              </div>
             </div>
             {isUser ? <EditProfile /> : <FollowBtn />}
           </div>
           <div className="profileInfo-center">
-            <span>followers</span>
-            <p>{followers.length}</p>
+            {/* <span>followers</span>
+            <p>{followers ? followers.length : '0'}</p>
             <span>followings</span>
-            <p>{followings.length}</p>
+            <p>{followings ? followings.length : '0'}</p> */}
             <span>
               <i className="fa-regular fa-images"></i>
-              Photos
+              Posts
             </span>
             <p>{posts.length}</p>
           </div>

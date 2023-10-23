@@ -1,33 +1,61 @@
 const userModel = require('../models/userModel');
 
 const friendController = {
-  addUnfriend: async (req, res) => {
+  addUnFriend: async (req, res) => {
     const { friend_id } = req.body;
     try {
-      const currentUser = await userModel.findById(req.user);
-
-      if (currentUser.followings.includes(friend_id)) {
-        await currentUser.updateOne({ $pull: { followings: friend_id } });
-        await userModel.updateOne(
-          { _id: friend_id },
-          { $pull: { followers: req.user } }
-        );
-        const followings = currentUser.followings.length;
-        res.status(200).json('Follow');
+      if (req.user === friend_id) {
+        return res
+          .status(400)
+          .json({ message: 'You can not follow yourself!.' });
       } else {
-        await currentUser.updateOne({ $push: { followings: friend_id } });
-        await userModel.updateOne(
-          { _id: friend_id },
-          { $push: { followers: req.user } }
-        );
-        // const followers = currentUser.followers.length;
-
-        res.status(200).json('Unfollow');
+        const currentUser = await userModel.findById(req.user);
+        if (currentUser.followings.includes(friend_id)) {
+          await currentUser.updateOne({ $pull: { followings: friend_id } });
+          await userModel.updateOne(
+            { _id: friend_id },
+            { $pull: { followers: req.user } }
+          );
+          res.status(200).json('Follow');
+        } else {
+          await currentUser.updateOne({ $push: { followings: friend_id } });
+          await userModel.updateOne(
+            { _id: friend_id },
+            { $push: { followers: req.user } }
+          );
+          res.status(200).json('Unfollow');
+        }
       }
     } catch (err) {
       return res.status(400).json({ message: 'friend could not find!.' });
     }
   },
+  // UnFriend: async (req, res) => {
+  //   const { friend_id } = req.body;
+  //   try {
+  //     if (req.user === friend_id) {
+  //       return res
+  //         .status(400)
+  //         .json({ message: 'You can not follow yourself!.' });
+  //     } else {
+  //       const currentUser = await userModel.findById(req.user);
+  //       if (currentUser.followings.includes(friend_id)) {
+  //         await currentUser.updateOne({ $pull: { followings: friend_id } });
+  //         await userModel.updateOne(
+  //           { _id: friend_id },
+  //           { $pull: { followers: req.user } }
+  //         );
+  //         res.status(200).json('Follow');
+  //       } else {
+  //         return res
+  //           .status(400)
+  //           .json({ message: 'You are not following this user!' });
+  //       }
+  //     }
+  //   } catch (err) {
+  //     return res.status(400).json({ message: 'friend could not find!.' });
+  //   }
+  // },
   GetAllFollowerAndFollowing: async (req, res) => {
     try {
       const currentUser = await userModel.findOne({
@@ -62,21 +90,22 @@ const friendController = {
 
   getFollowingsByUsername: async (req, res) => {
     try {
-      const user = await userModel.findOne({ username: req.params.username });
-      const followings = await Promise.all(
-        user.followings.map((followingId) => {
-          return userModel.findById(followingId);
+      const currentUser = await userModel.findOne({
+        username: req.params.username,
+      });
+      const followingFriend = await Promise.all(
+        currentUser.followings.map((friendId) => {
+          return userModel.findById(friendId);
         })
       );
-      let followingList = [];
-      followings.map((following) => {
-        const { ...all } = following._doc;
-        followingList.push(all);
+      let followingFriendList = [];
+      followingFriend.map((friend) => {
+        const { ...all } = friend._doc;
+        followingFriendList.push(all);
       });
-
-      return res.status(200).json(followingList);
+      return res.status(200).json(followingFriendList);
     } catch (err) {
-      return res.status(400).json({ message: 'User could not find' });
+      console.log(err);
     }
   },
   getFollowersByUsername: async (req, res) => {

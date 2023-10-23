@@ -27,6 +27,10 @@ const UserSchema = mongoose.Schema(
       type: String,
       default: '',
     },
+    bio: {
+      type: String,
+      max: 50,
+    },
     cloudinary_id: {
       type: String,
       default: '',

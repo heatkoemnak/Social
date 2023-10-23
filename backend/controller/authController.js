@@ -12,15 +12,11 @@ const authController = {
       if (!username || !email || !password) {
         return res.status(401).json({ message: 'please filed the form!' });
       }
-      if (!email.includes('@') || !email.includes('.')) {
-        return res.status(401).json({ message: 'Invalid email format!' });
-      }
       if (username.length < 3 || password.length < 6) {
         return res
           .status(401)
           .json({ message: 'use at least 3 or 6 characters' });
       }
-      // check for existing users with same credentials
       let existingUser = false;
       const users = await userModel.find();
       users.forEach((user) => {

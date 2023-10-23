@@ -2,14 +2,13 @@ import Navbar from '../components/Navbar/Navbar';
 import SideBar from '../components/Side/SideBar';
 import { Outlet } from 'react-router-dom';
 import './layout.scss';
-import Noti from '../components/Notification/Noti';
 
-export default function Layout() {
+export default function Layout({ socket }) {
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="mainPage">
-        <SideBar />
+        <SideBar socket={socket} />
         <Outlet />
       </div>
     </>

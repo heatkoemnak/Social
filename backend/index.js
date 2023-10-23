@@ -11,6 +11,9 @@ const auth = require('./Middleware/auth');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
+const http = require('http');
+
+const { Server } = require('socket.io');
 
 const app = express();
 app.use(express.json());
@@ -32,6 +35,66 @@ app.use(
 );
 app.use(express.static(path.join(__dirname, './uploads')));
 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+  },
+});
+
+let OnlineUser = [];
+
+const addNewUser = (username, socketId) => {
+  !OnlineUser.some((user) => user.username === username) &&
+    OnlineUser.push({ username, socketId });
+};
+
+const getUser = (username) => {
+  return OnlineUser.find((user) => user.username === username);
+};
+
+io.on('connection', (socket) => {
+  socket.on('join', (user) => {
+    console.log(user + ': has connected');
+    addNewUser(user, socket.id);
+    // console.log(user);
+  });
+  socket.on(
+    'addUnFriend',
+    ({ senderName, receiverName, message, senderProfile, date }) => {
+      const sender = getUser(senderName);
+      const receiver = getUser(receiverName);
+      console.log(sender);
+      console.log(receiver);
+      if (receiver) {
+        io.to(receiver.socketId).emit('addUnFriend', {
+          senderName,
+          message,
+          senderProfile,
+          date,
+        });
+      }
+      // io.emit('addUnFriend', {
+      //   username,
+      //   message,
+      //   profilePicture,
+      //   date,
+      // });
+      console.log({
+        senderName,
+        message,
+        senderProfile,
+        date,
+      });
+    }
+  );
+
+  socket.on('disconnect', (user) => {
+    OnlineUser = OnlineUser.filter((user) => user.socketId !== socket.id);
+    console.log(user + ' user has left');
+  });
+});
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -40,10 +103,10 @@ mongoose
   .then(() => console.log('DB Connection Successful!'))
   .catch((err) => console.log(err));
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
+
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 app.use('/api/auth', authRoute);
 app.use('/api/users', auth, userRoute);
 app.use('/api/friend', auth, friendRoute);

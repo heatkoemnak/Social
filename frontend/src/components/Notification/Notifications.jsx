@@ -1,29 +1,21 @@
 import React from 'react';
 
-import { Posts } from '../../DummyData';
-import { Users } from '../../DummyData';
-
 export default function Notifications({ notification }) {
-  const posts = Posts.filter((post) => post.id === notification?.postId)[0];
-  const user = Users.filter((user) => user.id === posts?.userId)[0];
   return (
     <div className="notification">
       <div className="userInfo">
         <img
-          src={user?.profilePicture}
+          src={notification.senderProfile}
           alt=""
           style={{
-            width: '40px',
-            height: '40px',
+            width: '27px',
+            height: '27px',
             objectFit: 'cover',
             borderRadius: '50%',
           }}
         />
-        <small>
-          <b>{user?.username}</b>
-        </small>
+        <span>{notification.message}</span>
       </div>
-      <span>{notification.message}</span>
       <small>{notification.date}</small>
     </div>
   );
